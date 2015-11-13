@@ -34,12 +34,12 @@ post = [
 
 reminders = [
   "Hey, just a quick reminder you haven't done your " +
-    "#today-in-pk update yet",
+    "#paperkite-today update yet",
   "Hey, sorry to bug you but can you please do your " +
-    "#today-in-pk update soon?",
+    "#paperkite-today update soon?",
   "Hi, it doesn't look like you've done your " +
-    "#today-in-pk update yet, would you mind?",
-  "Morning, are you able to do your #today-in-pk " +
+    "#paperkite-today update yet, would you mind?",
+  "Morning, are you able to do your #paperkite-today " +
     "update when you have a moment?"
 ]
 
