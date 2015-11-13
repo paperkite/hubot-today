@@ -1,28 +1,51 @@
-dateformat = require 'dateformat'
+require 'datejs'
 Slack = require 'node-slack'
 
 class SlackToday
 
-  constructor: (@robot, @webhook_url) ->
+  constructor: (@robot, @webhook_url, @channel, @remindPhrases) ->
     @slack = new Slack @webhook_url
 
   send: (who, what) ->
-    date = dateformat(new Date, "dddd dS mmmm")
+    date = Date.today().toString("dddd dS MMMM")
     @slack.send({
       text: "#{what}\n_#{date}_ cc/ <@#{who.username}>\n",
-      username: "#{who.name} (via TodayBot)",
+      channel: @channel,
+      username: "#{who.name} (via Pootle)",
       icon_url: who.image
     })
 
+  remind: (who) ->
+    envelope = { room: who.username }
+    reminder = @remindPhrases[Math.floor(Math.random()*@remindPhrases.length)]
+    console.log "Sending a #{reminder} to #{who.username}"
+    @robot.send(
+      envelope,
+      "#{reminder}\nJust use the `/today` command to make your update.\n\n" +
+      "PS. If you are away, just reply to this DM with something like " +
+      "\"I'm away until next Tuesday\" or " +
+      "\"I'm away until 20th " + Date.today().next().month().toString("MMMM")
+    )
+
   getUserProfile: (user_name) ->
     user = @robot.brain.userForName(user_name)
+    convertUser user
 
-    profile = { name: user_name, username: user_name }
-    if user && user.slack
-      profile.name = user.slack.real_name
-      profile.email = user.slack.profile.email
-      profile.image = user.slack.profile.image_72
+  getChannelMembers: ->
+    channel = @robot.adapter.client.getChannelByName @channel
+    members = []
+    for user_id in channel.members
+      user = @robot.brain.userForId(user_id)
+      members.push(convertUser(user)) unless user.slack.is_bot
 
-    profile
+    members
+
+  convertUser = (user) ->
+    {
+      username: user.name
+      name: user.slack.real_name,
+      email: user.slack.profile.email
+      image: user.slack.profile.image_72
+    }
 
 module.exports = SlackToday
