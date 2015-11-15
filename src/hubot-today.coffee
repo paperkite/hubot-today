@@ -67,12 +67,19 @@ module.exports = (robot) ->
 
     res.send("ok")
 
-  robot.respond /i.?m away (?:until (?:the )?)?(.*)/i, (res) ->
-    user = slack.getUserProfile res.message.user.name
-    date = today.setAway(user, res.match[1])
+  away_regex = /(i.?m|@?[a-z]+)(?: is)? away (?:until (?:the )?)?(.*)/i
+  robot.respond away_regex, (res) ->
+    if ['im', 'i\'m'].indexOf(res.match[1]) != -1
+      user = slack.getUserProfile res.message.user.name
+      who = 'you'
+    else
+      user = slack.getUserProfile res.match[1].substring(1)
+      who = user.username
+
+    date = today.setAway(user, res.match[2])
     if date
       date = date.toString("dddd dS MMMM, yyyy")
-      res.reply "Ok, I've set you away until #{date}"
+      res.reply "Ok, I've set #{who} away until #{date}"
     else
       res.reply "sorry I didn't understand, can you be more specific?"
 
@@ -87,11 +94,16 @@ module.exports = (robot) ->
     else
       res.reply "Nobody is away at the moment!"
 
-  robot.respond /i.?m back now/i, (res) ->
-    user = slack.getUserProfile res.message.user.name
-    today.setBack(user)
+  robot.respond /(i.?m|@?[a-z]+)(?: is)? back now/i, (res) ->
+    if ['im', 'i\'m'].indexOf(res.match[1]) != -1
+      user = slack.getUserProfile res.message.user.name
+      who = 'you are'
+    else
+      user = slack.getUserProfile res.match[1].substring(1)
+      who = "#{user.username} is"
 
-    res.reply "Sweet as, you are not marked away anymore!"
+    today.setBack(user)
+    res.reply "Sweet as, #{who} not marked away anymore!"
 
   robot.respond /send today reminders/i, (res) ->
     sent = today.rollcall().length
