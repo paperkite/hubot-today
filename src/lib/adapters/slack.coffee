@@ -9,7 +9,7 @@ class SlackToday
   send: (who, what) ->
     date = Date.today().toString("dddd dS MMMM")
     @slack.send({
-      text: "#{what}\n_#{date}_ cc/ <@#{who.username}>\n",
+      text: what,
       channel: @channel,
       username: "#{who.name} (via Pootle)",
       icon_url: who.image
