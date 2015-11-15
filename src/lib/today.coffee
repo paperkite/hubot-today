@@ -16,6 +16,7 @@ class Today
 
   setAway: (who, input) ->
     date = chrono.parseDate(input)
+    date.setHours 0
     false if Date.compare(date, Date.today()) == 1
 
     console.log "Setting #{who.username} as away until #{date}"
