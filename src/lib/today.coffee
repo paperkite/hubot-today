@@ -37,7 +37,15 @@ class Today
     away
 
   listAway: () ->
-    @brain.today.away
+    away = []
+    for user, date in @brain.today.away
+      member = adapter.getUserProfile user
+      if @isAway member
+        member.away_until = Date.parse(date)
+        away.push(member)
+      else
+        @setBack(member)
+    away
 
   rollcall: (send = true) ->
     members = @adapter.getChannelMembers()

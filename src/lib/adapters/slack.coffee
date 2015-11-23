@@ -12,7 +12,8 @@ class SlackToday
       text: what,
       channel: @channel,
       username: "#{who.name} (via Pootle)",
-      icon_url: who.image
+      icon_url: who.image,
+      link_names: 1
     })
 
   remind: (who) ->

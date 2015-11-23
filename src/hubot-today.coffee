@@ -29,18 +29,25 @@ pre = [ "Thanks", "Cheers", "Gracias", "Obrigado", "Merci"]
 post = [
   "have a great day", "let's get cracking then",
   "much appreciated", "may the force be with you",
+  ":pk: :rocket: :moon:"
   "you're awesome", "nice", "stunning", "let's do it"
 ]
 
 reminders = [
   "Hey, just a quick reminder you haven't done your " +
-    "#paperkite-today update yet",
+    "#pk-today update yet",
   "Hey, sorry to bug you but can you please do your " +
-    "#paperkite-today update soon?",
+    "#pk-today update soon?",
   "Hi, it doesn't look like you've done your " +
-    "#paperkite-today update yet, would you mind?",
-  "Morning, are you able to do your #paperkite-today " +
-    "update when you have a moment?"
+    "#pk-today update yet, would you mind?",
+  "Morning, are you able to do your #pk-today " +
+    "update when you have a moment?",
+  "'scuse me, do you have any spare change? But seriously " +
+    "can you do your #pk-today update please?",
+  "Busy? Of course you are! Tell everyone how busy you are " +
+    "in #pk-today",
+  "#pk-today time champ, hop to it.",
+  "Yo, do you know what time it is? It's #pk-today time!"
 ]
 
 
@@ -69,7 +76,7 @@ module.exports = (robot) ->
 
   away_regex = /(i.?m|@?[a-z]+)(?: is)? away (?:until (?:the )?)?(.*)/i
   robot.respond away_regex, (res) ->
-    if ['im', 'i\'m'].indexOf(res.match[1]) != -1
+    if ['im', 'i\'m'].indexOf(res.match[1].toLowerCase()) != -1
       user = slack.getUserProfile res.message.user.name
       who = 'you'
     else
@@ -85,9 +92,9 @@ module.exports = (robot) ->
 
   robot.respond /(?:who.?s|who is) away\?/i, (res) ->
     away = []
-    for user, date of today.listAway()
-      date = Date.parse(date).toString("dddd dS MMMM, yyyy")
-      away.push("#{user} away until #{date}")
+    for member of today.listAway()
+      date = member.away_until.toString("dddd dS MMMM, yyyy")
+      away.push("#{member.username} away until #{date}")
 
     if away.length
       res.reply "These people are away:\n" + away.join("\n")
