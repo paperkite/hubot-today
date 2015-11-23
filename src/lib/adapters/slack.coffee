@@ -19,7 +19,6 @@ class SlackToday
   remind: (who) ->
     envelope = { room: who.username }
     reminder = @remindPhrases[Math.floor(Math.random()*@remindPhrases.length)]
-    console.log "Sending a #{reminder} to #{who.username}"
     @robot.send(
       envelope,
       "#{reminder}\nJust use the `/today` command to make your update.\n\n" +

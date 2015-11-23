@@ -4,7 +4,7 @@ chrono = require 'chrono-node'
 
 class Today
 
-  constructor: (@adapter, @brain) ->
+  constructor: (@adapter, @brain, @logger) ->
     @brain.today ?= { recorded: {}, away: {} }
 
   record: (who, what) ->
@@ -19,12 +19,12 @@ class Today
     date.setHours 0
     false if Date.compare(date, Date.today()) == 1
 
-    console.log "Setting #{who.username} as away until #{date}"
+    @logger.debug "Setting #{who.username} as away until #{date}"
     @brain.today.away[who.username] = date.toString()
     date
 
   setBack: (who) ->
-    console.log "Setting #{who.username} as back"
+    @logger.debug "Setting #{who.username} as back"
     delete @brain.today.away[who.username]
 
   isAway: (who) ->
@@ -33,13 +33,14 @@ class Today
 
     away = Date.compare(Date.parse(away_date), Date.today()) == 1
     @setBack(who) if !away
-    console.log "#{who.username} is away until #{away_date}" if away
+    @logger.debug "#{who.username} is away until #{away_date}" if away
     away
 
   listAway: () ->
     away = []
-    for user, date in @brain.today.away
-      member = adapter.getUserProfile user
+    for user, date of @brain.today.away
+      @logger.debug "#{user} stored as away until #{date}" if away
+      member = @adapter.getUserProfile user
       if @isAway member
         member.away_until = Date.parse(date)
         away.push(member)
@@ -53,7 +54,7 @@ class Today
     for member in members
       continue if @brain.today.recorded[member.username] || @isAway(member)
 
-      console.log "Reminding #{member.username} to update their today status"
+      @logger.debug "Reminding #{member.username} to update their today status"
       @adapter.remind(member) if send
       sent.push(member)
 

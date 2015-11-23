@@ -54,7 +54,7 @@ reminders = [
 module.exports = (robot) ->
 
   slack = new SlackToday(robot, REPLY_WEBHOOK, SLACK_CHANNEL, reminders)
-  today = new Today(slack, robot.brain.data)
+  today = new Today(slack, robot.brain.data, robot.logger)
 
   robot.router.post "/today/slack-webhook", (req, res) ->
     return res.status(403).send('nope') unless req.body.token == SLACK_TOKEN
@@ -92,7 +92,7 @@ module.exports = (robot) ->
 
   robot.respond /(?:who.?s|who is) away\?/i, (res) ->
     away = []
-    for member of today.listAway()
+    for member in today.listAway()
       date = member.away_until.toString("dddd dS MMMM, yyyy")
       away.push("#{member.username} away until #{date}")
 
