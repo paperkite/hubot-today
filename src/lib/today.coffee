@@ -12,6 +12,7 @@ class Today
     @adapter.send who, what
 
   resetRecords: () ->
+    @logger.info "Resetting today records"
     @brain.today.recorded = {}
 
   setAway: (who, input) ->
