@@ -49,8 +49,11 @@ class Today
         @setBack(member)
     away
 
-  rollcall: (send = true) ->
+  rollcall: (send = true, all = false) ->
     members = @adapter.getChannelMembers()
+
+    return members if all
+
     sent = []
     for member in members
       continue if @brain.today.recorded[member.username] || @isAway(member)

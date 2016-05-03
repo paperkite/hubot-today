@@ -116,9 +116,9 @@ module.exports = (robot) ->
     sent = today.rollcall().length
     res.reply "I've sent out #{sent} reminders :+1:"
 
-  robot.respond /who needs a today reminder\?/i, (res) ->
+  robot.respond /who (needs|gets) a today reminder\?/i, (res) ->
     users = []
-    for user in today.rollcall(false)
+    for user in today.rollcall(false, res.match[1] == 'gets')
       users.push(user.username)
 
     if users.length
