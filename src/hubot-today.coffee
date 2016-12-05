@@ -74,6 +74,14 @@ module.exports = (robot) ->
 
     res.send("ok")
 
+  robot.receiveMiddleware (context, next, done) ->
+    envelope = context.response.envelope
+    return next(done) unless "##{envelope.room}" == SLACK_CHANNEL
+    
+    user = slack.getUserProfile envelope.user.name
+    today.record user
+    done()
+
   away_regex = /(i.?m|@?[a-z]+)(?: is)? away (?:until (?:the )?)?(.*)/i
   robot.respond away_regex, (res) ->
     if ['im', 'i\'m'].indexOf(res.match[1].toLowerCase()) != -1

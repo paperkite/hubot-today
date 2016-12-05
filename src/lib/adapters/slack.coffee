@@ -6,16 +6,6 @@ class SlackToday
   constructor: (@robot, @webhook_url, @channel, @remindPhrases) ->
     @slack = new Slack @webhook_url
 
-  send: (who, what) ->
-    date = Date.today().toString("dddd dS MMMM")
-    @slack.send({
-      text: what,
-      channel: @channel,
-      username: "#{who.name} (via Pootle)",
-      icon_url: who.image,
-      link_names: 1
-    })
-
   remind: (who) ->
     envelope = { room: who.username }
     reminder = @remindPhrases[Math.floor(Math.random()*@remindPhrases.length)]

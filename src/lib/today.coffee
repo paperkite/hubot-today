@@ -7,9 +7,9 @@ class Today
   constructor: (@adapter, @brain, @logger) ->
     @brain.today ?= { recorded: {}, away: {} }
 
-  record: (who, what) ->
+  record: (who) ->
+    @logger.info "Recording today status for #{who.username}"
     @brain.today.recorded[who.username] = true
-    @adapter.send who, what
 
   resetRecords: () ->
     @logger.info "Resetting today records"
